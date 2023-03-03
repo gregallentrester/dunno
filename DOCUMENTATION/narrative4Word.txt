@@ -1,0 +1,80 @@
+
+
+^^^
+A.  App.java
+
+Token.Builder builder =
+  new Token.Builder(
+    Algorithm.HMAC256("secret"));
+
+Token token =
+  builder.build();
+
+
+
+^^^
+B.  Token.Builder.java
+
+Instantiate a JWT Builder
+
+public Builder(Algorithm algo) {
+
+  algorithm = algo;
+  header = new Header();
+  payload = new Payload();
+
+  header.setAlgorithm(algorithm.getName());
+}
+
+
+
+^^^
+C.  Token.Builder.java
+
+public Token build() throws Exception {
+  return new Token(this);
+}
+
+
+
+^^^
+D.  Token.java
+
+private constructor
+
+private Token(Builder builder) {
+
+  algorithm = builder.algorithm;
+  payload = builder.payload;
+  header = builder.header;
+  signature = createSignature();
+}
+
+
+
+^^^
+E.  Token.java
+
+private String createSignature() {
+
+  String concatenated =
+    String.format(
+      "%s.%s",
+      header.base64Encoded(),
+      payload.base64Encoded());
+
+  byte[] signed =
+    algorithm.sign(
+      concatenated.getBytes(StandardCharsets.UTF_8));
+
+  return Base64Utils.encodeBase64URL(signed);
+}
+
+
+
+^^^
+
+
+System.err.println(
+  "\n ------------------------->>> Class.getCanonicalName() " +
+  getClass().getCanonicalName() + ".constructor(Algo)");

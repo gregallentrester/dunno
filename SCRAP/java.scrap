@@ -1,0 +1,114 @@
+
+Intentional FAIL
+Make the attempt date reflect yesterday, and the NBF Claim reflect today.
+
+Intentional HAPPY
+Make the attempt date reflect tomorrow, and the NBF Claim reflect today.
+
+Document validate class(es)
+
+// https://github.com/BastiaanJansen/jwt-java
+
+
+  @Test
+  void withInvalidNotBefore_throwsException() throws Exception {
+
+    final int TOMORROW_SECONDS_DISPLACEMENT = 86_400;
+
+    Date tomorrow =
+      Date.from(Instant.
+        now().plusSeconds(TOMORROW_SECONDS_DISPLACEMENT));
+
+    Date now = Date.from(Instant.now());
+
+
+  System.err.println(
+    "\n\n Expect VIOLATION" +
+    " | withInvalidNotBefore_throwsException()" +
+    "\n\n -------->>--->>> tomorrow " + tomorrow +
+    "\n -------->>--->>>    today " + now + "\n\n");
+
+    Token token =
+      new Token.Builder(algorithm).
+        withNotBefore(tomorrow).build();
+
+    TokenValidator validator =
+      new TokenValidator.Builder().
+        withNotBefore(tomorrow).build();
+
+    assertThrows(Exception.class, () ->
+      validator.validate(token));
+  }
+
+
+  @Test
+  void withValidNotBefore_noThrow() throws Exception {
+
+    final int YESTERDAY_SECONDS_DISPLACEMENT = 86_400;
+
+    Date yesterday =
+      Date.from(Instant.
+        now().minusSeconds(YESTERDAY_SECONDS_DISPLACEMENT));
+
+    Date now = Date.from(Instant.now());
+
+
+    System.err.println(
+      "\n\n Expect COMPLIANCE" +
+      " | withValidNotBefore_noThrow()" +
+      "\n\n -------->>--->>> yesterday " + yesterday +
+      "\n -------->>--->>>     today " + now + "\n\n");
+
+
+    Token token =
+      new Token.Builder(algorithm).
+        withNotBefore(yesterday).build();
+
+    TokenValidator validator =
+      new TokenValidator.Builder().
+        withNotBefore(yesterday).build();
+
+    assertDoesNotThrow(() ->
+      validator.validate(token));
+  }
+
+
+
+
+/*
+
+Date nowAsDate =
+  Date.from(
+    LocalDate.now().
+      atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+LocalDate currentDateLD =
+nowAsDate.toInstant().
+atZone(ZoneId.systemDefault()).
+  toLocalDate();
+
+
+
+LocalDate recentAttemptLD =
+currentDateLD.minusDays(1);
+
+
+Date niceTryAsDate =
+Date.from(
+recentAttemptLD.atStartOfDay().
+  atZone(ZoneId.systemDefault()).
+    toInstant());
+≅
+
+System.err.println(
+"\n\n---------------------->>> \n" +
+"\n   currentDateLocalDate  " + currentDateLD +
+"\n recentAttemptLocalDate  " + recentAttemptLD +
+"\n\n currentDateRepresentation  " + nowAsDate +
+"\n attemptDateRepresentation  " + niceTryAsDate +
+"\n\n<<<---------------------- \n");
+
+*/
+
+
+ javadoc -d ./JD/html -sourcepath ./src/main/java net.greg.jwt.App.java 
